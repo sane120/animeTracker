@@ -15,16 +15,26 @@ Whenever you click on an anime or the dedicated button on the list of animes, yo
 Whenever you land up on your page, you will be able to define the current episode you are on. This will be also crucial as it helps you track your progress. 
 
 ### Login
-Obviously, you will be able to save your stuff. Therefore a backend needs to be created connected to a DB. 
+Being able to have data backed up wherever you are, for that, a login is necessary. I will use Node.js with mySQL for that backend part. The usual Login contains the following points.
+- username
+- e-mail
+- password
 
 ### Settings
-Having a way to manage your userdata and preferences.
+The settings will be there to adjust following points.
+- username
+- e-mail
+- password
+- language
+- avatar
+
+Furthermore, you'll be able to chose a Light or Dark mode. That option will be nested on the Nav-Bar if you click on your username.
 
 ### View Charts
-Gathering data from the API to show the charts with ratings.
+There are seasonal charts. They do work, as the name already suggests, with the four seasons, based on the Gregorian calendar. The application will show you the seasonal ratings & charts of the top titles from the past seasons and the current one.
 
-### Get notificated
-Getting a notification whenever a new episode releases. 
+### Receive notifications
+Getting a notification whenever a new episode releases. Ideally I want to achieve it with an e-Mail system but am not sure yet, how to achieve that. But it will be an important point to have in this application.
 
 ### Backlog
-Able to view your already watched movies.
+Able to view your already watched movies like an history page. You'll be able to see which episode you've watched latest, for example. 
