@@ -4,7 +4,8 @@ import { defineComponent } from 'vue';
 
   export default defineComponent({
     setup() {
-
+      return {
+      }
     },
     components:{
 
@@ -17,10 +18,16 @@ import { defineComponent } from 'vue';
           <template v-slot:prepend>
             <v-app-bar-nav-icon></v-app-bar-nav-icon>
           </template>
-
           <v-app-bar-title class="title" @click="$router.push('/')"
             >Anitrack
           </v-app-bar-title>
+          <form class="search-box" @submit.prevent="$emit('submit')">
+            <input type="search"
+             class="search-field"
+             placeholder="Search for an anime..."
+             required
+            />
+          </form>
           <v-spacer></v-spacer>
           <v-btn to="/two" icon>
             <v-icon>mdi-magnify</v-icon>
