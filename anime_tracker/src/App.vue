@@ -1,43 +1,54 @@
 <script lang="ts">
-  import AppBar from "@/components/AppBar.vue";
-  import { defineComponent } from 'vue';
-  import Card from '@/components/Card.vue';
-  import { ref } from 'vue';
+import AppBar from "@/components/AppBar.vue";
+import { defineComponent, ref } from "vue";
+import Card from "@/components/Card.vue";
 
-  export default defineComponent({
+export default defineComponent({
+  emits: ["submit"],
+  components: {
+    AppBar,
+  },
+  setup() {
+    const searchQuery = ref("");
+    const animeList = ref([]);
+    const isSearching = ref(false); //flag to prevent multiple searches
 
-    emits: ['submit'],
-
-    setup() {
-      const searchQuery = ref("");
-      const animeList = ref([]);
-
-      const handleSearch = async () => {
-      console.log('handleSearch called');
-      const response = await fetch(`https://api.jikan.moe/v4/anime?q=${searchQuery.value}`);
-      const data = await response.json();
-      console.log(data);
-};
-
-      return {
-        Card,
-        searchQuery,
-        animeList,
-        handleSearch,
+    const handleSearch = async () => {
+      if (isSearching.value) {
+        // If a search is already in progress, do not execute another one
+        return;
       }
-    },
-    components:{
-      AppBar
-    }
-  })
-</script>
+      console.log("handleSearch called with query:", searchQuery.value);
+      isSearching.value = true;
+      try {
+        const response = await fetch(
+          `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(
+            searchQuery.value
+          )}`
+        );
+        const data = await response.json();
+        console.log(data);
 
+        animeList.value = data.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        isSearching.value = false;
+      }
+    };
+
+    return {
+      searchQuery,
+      animeList,
+      handleSearch,
+    };
+  },
+});
+</script>
 <template>
   <v-app>
-    <AppBar @submit="handleSearch"></AppBar>
+    <AppBar :searchQuery="searchQuery" @submit="handleSearch"></AppBar>
     <router-view />
-    <div class="cards">
-      {{ Card }}
-    </div>"
+    <div class="cards"></div>
   </v-app>
 </template>
