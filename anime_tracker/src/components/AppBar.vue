@@ -1,15 +1,25 @@
 <script lang="ts">
 
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 
-  export default defineComponent({
-    setup() {
+export default defineComponent({
+  props: {
+    searchQuery: String,
+  },
+  emits: [ "onSearch" ],
+  setup(props, { emit }) {
+    const searchField = ref("");
 
-    },
-    components:{
+    const handleSearch = () => {
+      emit('onSearch', searchField.value);
+    };
 
-    }
-  })
+    return {
+      searchField,
+      handleSearch,
+    };
+  },
+});
 </script>
 <template>
   <v-app-bar
@@ -17,10 +27,18 @@ import { defineComponent } from 'vue';
           <template v-slot:prepend>
             <v-app-bar-nav-icon></v-app-bar-nav-icon>
           </template>
-
           <v-app-bar-title class="title" @click="$router.push('/')"
             >Anitrack
           </v-app-bar-title>
+          <form class="search-box" @submit.prevent="handleSearch">
+    <input
+      v-model="searchField"
+      type="search"
+      class="search-field"
+      placeholder="Search for an anime..."
+      required
+    />
+  </form>
           <v-spacer></v-spacer>
           <v-btn to="/two" icon>
             <v-icon>mdi-magnify</v-icon>
