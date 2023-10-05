@@ -1,44 +1,25 @@
 <script lang="ts">
 import AppBar from "@/components/AppBar.vue";
-import { defineComponent, ref } from "vue";
-import Card from "@/components/Card.vue";
+import { defineComponent, ref } from 'vue';
+import Card from '@/components/Card.vue';
+import {  OverviewArray } from "./models/animeSearch";
+import { APIHandler } from './models/APIHandler';
 
 export default defineComponent({
-  emits: ["submit"],
+  emits: ['onSearch'],
   components: {
     AppBar,
   },
   setup() {
-    const searchQuery = ref("");
-    const animeList = ref([]);
-    const isSearching = ref(false); //flag to prevent multiple searches
+    const animeList = ref<OverviewArray>([]);
+    const apiHandler = new APIHandler();
 
-    const handleSearch = async () => {
-      if (isSearching.value) {
-        // If a search is already in progress, do not execute another one
-        return;
-      }
-      console.log("handleSearch called with query:", searchQuery.value);
-      isSearching.value = true;
-      try {
-        const response = await fetch(
-          `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(
-            searchQuery.value
-          )}`
-        );
-        const data = await response.json();
-        console.log(data);
-
-        animeList.value = data.data;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        isSearching.value = false;
-      }
+    const handleSearch = async (value: string) => {
+      animeList.value = await apiHandler.getAnimeSearch(value);
+      console.log(animeList.value);
     };
 
     return {
-      searchQuery,
       animeList,
       handleSearch,
     };
@@ -47,8 +28,10 @@ export default defineComponent({
 </script>
 <template>
   <v-app>
-    <AppBar :searchQuery="searchQuery" @submit="handleSearch"></AppBar>
+    <AppBar @onSearch="handleSearch"></AppBar>
     <router-view />
-    <div class="cards"></div>
+    <div class="cards">
+    </div>
   </v-app>
 </template>
+
