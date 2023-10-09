@@ -3,6 +3,7 @@
 import { Overviews } from '@/models/animeModels';
 import { APIHandler } from '@/models/APIHandler';
 import { defineComponent, ref } from 'vue';
+import { useTheme } from 'vuetify';
 
 export default defineComponent({
   props: {
@@ -27,15 +28,22 @@ export default defineComponent({
 });
 </script>
 <template>
-  <v-app-bar color="#C08497">
+  <v-app-bar color="secondary">
     <template v-slot:prepend>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
     </template>
-    <v-app-bar-title class="title" @click="$router.push('/')">Anitrack
+    <v-app-bar-title
+      class="title" @click="$router.push('/')">Anitrack
     </v-app-bar-title>
-    <form class="search-box" @submit.prevent="handleSearch">
-      <input v-model="searchField" type="search" class="search-field" placeholder="Search for an anime..." required />
-    </form>
+    <v-form @submit.prevent="handleSearch">
+    <v-container>
+          <v-text-field
+            v-model="searchField"
+            label="Search for an anime..."
+            required
+          ></v-text-field>
+    </v-container>
+  </v-form>
     <v-spacer></v-spacer>
     <v-btn to="/two" icon>
       <v-icon>mdi-magnify</v-icon>
@@ -52,7 +60,6 @@ export default defineComponent({
 .title {
   font-family: Roboto;
   font-size: 36px;
-  color: #FEF5EF;
   cursor: pointer;
 }
 
