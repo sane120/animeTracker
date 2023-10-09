@@ -10,25 +10,22 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify } from 'vuetify'
-import {
-  VDataTable,
-  VDataTableServer,
-  VDataTableVirtual,
-} from "vuetify/labs/VDataTable";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   components: {
-    VDataTable,
-    VDataTableServer,
-    VDataTableVirtual,
   },
   theme: {
     themes: {
       light: {
         colors: {
-          primary: '#1867C0',
-          secondary: '#5CBBF6',
+          primary: '#FEF5EF',
+          secondary: '#C08497',
+          accent: '#59114D',
+          error: '#598392',
+          info: '#C16E70',
+          success: '',
+          warning: '',
         },
       },
     },

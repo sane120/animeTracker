@@ -1,4 +1,4 @@
-export type OverviewArray = Overview[]
+export type Overviews = Overview[]
 export interface Overview {
   mal_id: number
   url: string
@@ -29,30 +29,32 @@ export interface Overview {
   season?: string
   year?: number
   broadcast: Broadcast
-  producers: Producer[]
-  licensors: Licensor[]
-  studios: Studio[]
+  producers: StudioInformation[]
+  licensors: StudioInformation[]
+  studios: StudioInformation[]
   genres: Genre[]
   explicit_genres: any[]
   themes: Theme[]
-  demographics: Demographic[]
+  demographics: StudioInformation[]
 }
 
 export interface Images {
-  jpg: Jpg
-  webp: Webp
+  jpg: MediaFormat
+  webp: MediaFormat
 }
 
-export interface Jpg {
+export interface MediaFormat {
   image_url: string
   small_image_url: string
   large_image_url: string
 }
 
-export interface Webp {
-  image_url: string
-  small_image_url: string
-  large_image_url: string
+export interface Images2 {
+  medium_image_url?: string
+  maximum_image_url?: string
+  image_url?: string
+  small_image_url?: string
+  large_image_url?: string
 }
 
 export interface Trailer {
@@ -62,12 +64,16 @@ export interface Trailer {
   images: Images2
 }
 
-export interface Images2 {
-  image_url?: string
-  small_image_url?: string
-  medium_image_url?: string
-  large_image_url?: string
-  maximum_image_url?: string
+
+
+export interface Genre {
+  mal_id: number
+  type: string
+  name: string
+  url: string
+}
+
+export interface Theme extends Genre {
 }
 
 export interface Title {
@@ -83,20 +89,17 @@ export interface Aired {
 }
 
 export interface Prop {
-  from: From
+  from: FromDate
   to: To
 }
 
-export interface From {
+export interface FromDate {
   day?: number
   month?: number
   year?: number
 }
 
-export interface To {
-  day?: number
-  month?: number
-  year?: number
+export interface To extends FromDate {
 }
 
 export interface Broadcast {
@@ -106,42 +109,7 @@ export interface Broadcast {
   string?: string
 }
 
-export interface Producer {
-  mal_id: number
-  type: string
-  name: string
-  url: string
-}
-
-export interface Licensor {
-  mal_id: number
-  type: string
-  name: string
-  url: string
-}
-
-export interface Studio {
-  mal_id: number
-  type: string
-  name: string
-  url: string
-}
-
-export interface Genre {
-  mal_id: number
-  type: string
-  name: string
-  url: string
-}
-
-export interface Theme {
-  mal_id: number
-  type: string
-  name: string
-  url: string
-}
-
-export interface Demographic {
+export interface StudioInformation {
   mal_id: number
   type: string
   name: string
