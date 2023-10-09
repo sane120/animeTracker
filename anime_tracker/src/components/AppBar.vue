@@ -2,27 +2,51 @@
 
 import { Overviews } from '@/models/animeModels';
 import { APIHandler } from '@/models/APIHandler';
-import { defineComponent, ref } from 'vue';
-import { useTheme } from 'vuetify';
+import { IAppViewModel } from '@/models/AppViewModel';
+import { defineComponent, PropType, ref, computed, watch } from 'vue';
 
 export default defineComponent({
   props: {
-    searchQuery: String,
+    appViewModel: {
+      required: true,
+      type: Object as PropType<IAppViewModel>
+    },
   },
-  setup() {
+  setup(props) {
+
     const searchField = ref("");
+
+    const appViewModel = computed(() => props.appViewModel);
+    const localappViewModel = ref({ ...props.appViewModel });
+
+    watch(
+      appViewModel,
+      (newVal: any) => {
+        localappViewModel.value = { ...newVal };
+      },
+      { deep: true }
+    );
+
 
     const animeList = ref<Overviews>([]);
     const apiHandler = new APIHandler();
     const handleSearch = async () => {
-      animeList.value = await apiHandler.getAnimeSearch(searchField.value);
+      console.log(searchField.value);
+      appViewModel.value.searchField = searchField.value;
+      if (appViewModel.value.searchField) {
+      animeList.value = await apiHandler.getAnimeSearch(appViewModel.value.searchField);
       console.log(animeList.value);
+
+      if (animeList.value) {
+        appViewModel.value.animeList = animeList.value;
+      }
+    }
     };
 
     return {
       animeList,
       handleSearch,
-      searchField,
+      searchField
     };
   },
 });

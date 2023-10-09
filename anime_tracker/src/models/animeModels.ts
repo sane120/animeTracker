@@ -1,5 +1,5 @@
-export type Overviews = Overview[]
-export interface Overview {
+export type Overviews = IOverview[]
+export interface IOverview {
   mal_id: number
   url: string
   images: Images
