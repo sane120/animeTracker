@@ -1,22 +1,18 @@
 import { Overviews } from "./animeModels";
 
-export interface IAppViewModel {
-  searchField?: string;
+export interface IAppModel {
   animeList?: Overviews;
 }
 
-export class AppViewModel implements IAppViewModel {
-  searchField?: string | undefined;
+export class AppModel implements IAppModel {
   animeList?: Overviews | undefined;
 
   constructor(
     public config: {
-      searchField?: string
       animeList?: Overviews
-    }){
-      this.searchField = config.searchField ?? "";
-      this.animeList = config.animeList ?? [];
-    }
+    }) {
+    this.animeList = config.animeList ?? [];
+  }
 
 
 }

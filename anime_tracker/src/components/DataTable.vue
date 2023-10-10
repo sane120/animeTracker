@@ -1,38 +1,44 @@
 <script lang="ts">
 
-import { Overviews } from '@/models/animeModels';
-import { APIHandler } from '@/models/APIHandler';
-import { IAppViewModel } from '@/models/AppViewModel';
-import { defineComponent, ref, PropType, computed, watch } from 'vue';
+import { IAppModel } from '@/models/AppViewModel';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   props: {
-    appViewModel: {
+    appModel: {
       required: true,
-      type: Object as PropType<IAppViewModel>
+      type: Object as PropType<IAppModel>
     },
   },
   setup(props) {
-    const appViewModel = computed(() => props.appViewModel);
-    const localappViewModel = ref({ ...props.appViewModel });
-
-    watch(
-      appViewModel,
-      (newVal: any) => {
-        console.log("Data-Table");
-        console.log(appViewModel.value.animeList);
-        localappViewModel.value = { ...newVal };
-      },
-      { deep: true }
-    );
+    const headers = [
+      { title: 'Title', key: 'title' },
+    ];
+    return {
+      headers
+    }
 
   },
 });
 </script>
 <template>
-    <v-data-table
-    :items="appViewModel.animeList"></v-data-table>
+  <v-data-table :headers="headers" :items="appModel.animeList" :items-per-page="100" class="elevation-1">
+  </v-data-table>
 </template>
 <style scoped>
+.v-data-table.elevation-1 {
+  max-height: 80vh;
+  max-width: 80vw;
+  margin: auto;
+  overflow: auto;
+}
 
+
+
+.v-app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
 </style>

@@ -1,8 +1,8 @@
 <script lang="ts">
 import AppBar from "@/components/AppBar.vue";
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, ref } from 'vue';
 import DataTable from "@/components/DataTable.vue";
-import { AppViewModel } from "./models/AppViewModel";
+import { IAppModel } from "./models/AppViewModel";
 
 export default defineComponent({
 
@@ -10,21 +10,21 @@ export default defineComponent({
     AppBar,
     DataTable
   },
-  data(){}
+  data() { }
   ,
   setup() {
-    const viewModel = new AppViewModel({});
+    const appModel = ref<IAppModel>({});
     return {
-      viewModel
+      appModel
     };
   },
 });
 </script>
 <template>
   <v-app>
-    <AppBar :appViewModel="viewModel"></AppBar>
+    <AppBar :appModel="appModel" @update:appModel="newModel => appModel = newModel"></AppBar>
     <router-view />
-    <DataTable :appViewModel="viewModel"></DataTable>
+    <DataTable :appModel="appModel"></DataTable>
   </v-app>
 </template>
 

@@ -2,49 +2,33 @@
 
 import { Overviews } from '@/models/animeModels';
 import { APIHandler } from '@/models/APIHandler';
-import { IAppViewModel } from '@/models/AppViewModel';
-import { defineComponent, PropType, ref, computed, watch } from 'vue';
+import { IAppModel } from '@/models/AppViewModel';
+import { defineComponent, PropType, ref } from 'vue';
 
 export default defineComponent({
   props: {
-    appViewModel: {
+    appModel: {
       required: true,
-      type: Object as PropType<IAppViewModel>
+      type: Object as PropType<IAppModel>
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
 
     const searchField = ref("");
-
-    const appViewModel = computed(() => props.appViewModel);
-    const localappViewModel = ref({ ...props.appViewModel });
-
-    watch(
-      appViewModel,
-      (newVal: any) => {
-        localappViewModel.value = { ...newVal };
-      },
-      { deep: true }
-    );
-
-
+    const resultList = ref<Overviews>([]);
     const animeList = ref<Overviews>([]);
     const apiHandler = new APIHandler();
     const handleSearch = async () => {
-      console.log(searchField.value);
-      appViewModel.value.searchField = searchField.value;
-      if (appViewModel.value.searchField) {
-      animeList.value = await apiHandler.getAnimeSearch(appViewModel.value.searchField);
-      console.log(animeList.value);
 
-      if (animeList.value) {
-        appViewModel.value.animeList = animeList.value;
+      console.log(searchField.value);
+      resultList.value = await apiHandler.getAnimeSearch(searchField.value);
+      console.log(resultList.value);
+      if (resultList.value) {
+        emit('update:appModel', { ...props.appModel, animeList: resultList.value });
       }
-    }
     };
 
     return {
-      animeList,
       handleSearch,
       searchField
     };
@@ -56,18 +40,13 @@ export default defineComponent({
     <template v-slot:prepend>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
     </template>
-    <v-app-bar-title
-      class="title" @click="$router.push('/')">Anitrack
+    <v-app-bar-title class="title" @click="$router.push('/')">Anitrack
     </v-app-bar-title>
     <v-form @submit.prevent="handleSearch">
-    <v-container>
-          <v-text-field
-            v-model="searchField"
-            label="Search for an anime..."
-            required
-          ></v-text-field>
-    </v-container>
-  </v-form>
+      <v-container>
+        <v-text-field v-model="searchField" label="Search for an anime..." required></v-text-field>
+      </v-container>
+    </v-form>
     <v-spacer></v-spacer>
     <v-btn to="/two" icon>
       <v-icon>mdi-magnify</v-icon>
