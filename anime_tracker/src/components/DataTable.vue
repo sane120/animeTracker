@@ -22,7 +22,7 @@ export default defineComponent({
 });
 </script>
 <template>
-  <v-data-table :headers="headers" :items="appModel.animeList" :items-per-page="100" class="elevation-1">
+  <v-data-table :headers="headers" :items="appModel.animeList" :items-per-page="100" class="stylish-data-table">
   </v-data-table>
 </template>
 <style scoped>

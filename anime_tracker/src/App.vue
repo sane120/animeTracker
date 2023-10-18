@@ -2,29 +2,30 @@
 import AppBar from "@/components/AppBar.vue";
 import { defineComponent, ref } from 'vue';
 import DataTable from "@/components/DataTable.vue";
-import { IAppModel } from "./models/AppViewModel";
+import DataCards from "@/components/DataCards.vue";
+
+import { IAppModel } from "@/models/AppViewModel";
 
 export default defineComponent({
-
   components: {
     AppBar,
-    DataTable
+    DataTable,
+    DataCards,
   },
-  data() { }
-  ,
   setup() {
     const appModel = ref<IAppModel>({});
     return {
-      appModel
+      appModel,
     };
   },
 });
 </script>
+
 <template>
   <v-app>
     <AppBar :appModel="appModel" @update:appModel="newModel => appModel = newModel"></AppBar>
     <router-view />
     <DataTable :appModel="appModel"></DataTable>
+    <DataCards :appModel="appModel"></DataCards>
   </v-app>
 </template>
-
