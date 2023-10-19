@@ -9,7 +9,7 @@ export default defineComponent({
       type: Object as PropType<IAppModel>
     },
   },
-  setup(props) {
+  setup() {
     const isHovered = ref<number | null>(null);
 
     const toggleHover = (mal_id?: number | null) => {

@@ -16,7 +16,6 @@ export default defineComponent({
 
     const searchField = ref("");
     const resultList = ref<Overviews>([]);
-    const animeList = ref<Overviews>([]);
     const apiHandler = new APIHandler();
     const handleSearch = async () => {
 
