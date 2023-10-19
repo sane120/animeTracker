@@ -13,12 +13,33 @@ export default defineComponent({
     const isHovered = ref<number | null>(null);
 
     const toggleHover = (mal_id?: number | null) => {
-      isHovered.value = mal_id !== undefined ? mal_id : null;
+      isHovered.value = mal_id ?? null;
+    };
+
+    const addToFavorites = (mal_id: number) => {
+      const favorites = getFavorites();
+      favorites.push(mal_id);
+      saveFavorites(favorites);
+    };
+
+    const getFavorites = () => {
+      const favorites = localStorage.getItem('favorites');
+      return favorites ? JSON.parse(favorites) : [];
+    };
+
+    const saveFavorites = (favorites: number[]) => {
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    };
+
+    const isFavorite = (mal_id: number) => {
+      return getFavorites().includes(mal_id);
     };
 
     return {
       isHovered,
       toggleHover,
+      addToFavorites,
+      isFavorite,
     };
   },
 });
@@ -32,7 +53,7 @@ export default defineComponent({
       :key="overview.mal_id"
     >
       <v-img class="align-end image" height="300" width="300" :src="overview.images.jpg.large_image_url" cover>
-        <v-btn class="top-right-button" size="small" color="surface-variant" variant="text" @mouseover="toggleHover(overview.mal_id)" @mouseout="toggleHover(null)" :icon="isHovered === overview.mal_id ? 'mdi-heart' : 'mdi-heart-outline'"></v-btn>
+        <v-btn class="top-right-button" size="small" color="surface-variant" variant="text" @mouseover="toggleHover(overview.mal_id)" @mouseout="toggleHover(null)" :icon="isFavorite(overview.mal_id) ? 'mdi-heart' : (isHovered === overview.mal_id ? 'mdi-heart' : 'mdi-heart-outline')" @click="addToFavorites(overview.mal_id)"></v-btn>
       </v-img>
 
       <a :href="overview.url" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
