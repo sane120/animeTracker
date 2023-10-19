@@ -13,6 +13,7 @@ export default defineComponent({
   setup(props) {
     const headers = [
       { title: 'Title', key: 'title' },
+      { title: 'Synopsis', key: 'synopsis'}
     ];
     return {
       headers
