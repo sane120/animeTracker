@@ -36,11 +36,24 @@ export default defineComponent({
       return getFavorites().includes(mal_id);
     };
 
+    const toggleFavorites = (mal_id: number) => {
+      const favorites = getFavorites();
+      const index = favorites.indexOf(mal_id);
+      if (index !== -1) {
+        favorites.splice(index, 1);
+      } else {
+        favorites.push(mal_id);
+      }
+      saveFavorites(favorites);
+    };
+
+
     return {
       isHovered,
       toggleHover,
       addToFavorites,
       isFavorite,
+      toggleFavorites
     };
   },
 });
@@ -48,16 +61,8 @@ export default defineComponent({
 
 <template>
   <div class="card-container">
-    <v-card
-      class="mx-2 card"
-      v-for="overview in appModel.animeList"
-      :key="overview.mal_id"
-    >
-      <v-dialog
-        v-model="overview.dialog"
-        activator="parent"
-        width="auto"
-      >
+    <v-card class="mx-2 card" v-for="overview in appModel.animeList" :key="overview.mal_id">
+      <v-dialog v-model="overview.dialog" activator="parent" width="auto">
         <v-card>
           <v-card-text>
             {{ overview.synopsis }}
@@ -68,16 +73,11 @@ export default defineComponent({
         </v-card>
       </v-dialog>
       <v-img class="align-end image" height="300" width="300" :src="overview.images.jpg.large_image_url" cover>
-        <v-btn
-          class="top-right-button"
-          size="small"
-          color="surface-variant"
-          variant="text"
-          @mouseover="toggleHover(overview.mal_id)"
-          @mouseout="toggleHover(null)"
+        <v-btn class="top-right-button" size="small" color="surface-variant" variant="text"
+          @mouseover="toggleHover(overview.mal_id)" @mouseout="toggleHover(null)"
           :icon="isFavorite(overview.mal_id) ? 'mdi-heart' : (isHovered === overview.mal_id ? 'mdi-heart' : 'mdi-heart-outline')"
-          @click="addToFavorites(overview.mal_id)"
-        ></v-btn>
+          @click="toggleFavorites(overview.mal_id)"></v-btn>
+
       </v-img>
       <a :href="overview.url" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
         <v-card-title class="text-primary title">
@@ -109,6 +109,7 @@ export default defineComponent({
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
+
 .card:hover {
   transform: translateY(1px);
 }
