@@ -36,6 +36,7 @@ export interface IOverview {
   explicit_genres: any[]
   themes: Theme[]
   demographics: StudioInformation[]
+  dialog: boolean;
 }
 
 export interface Images {

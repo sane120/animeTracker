@@ -6,9 +6,10 @@ export default defineComponent({
   props: {
     appModel: {
       required: true,
-      type: Object as PropType<IAppModel>
+      type: Object as PropType<IAppModel>,
     },
   },
+
   setup(props) {
     const isHovered = ref<number | null>(null);
 
@@ -52,10 +53,32 @@ export default defineComponent({
       v-for="overview in appModel.animeList"
       :key="overview.mal_id"
     >
+      <v-dialog
+        v-model="overview.dialog"
+        activator="parent"
+        width="auto"
+      >
+        <v-card>
+          <v-card-text>
+            {{ overview.synopsis }}
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="primary" block @click="overview.dialog = false">Close Dialog</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-img class="align-end image" height="300" width="300" :src="overview.images.jpg.large_image_url" cover>
-        <v-btn class="top-right-button" size="small" color="surface-variant" variant="text" @mouseover="toggleHover(overview.mal_id)" @mouseout="toggleHover(null)" :icon="isFavorite(overview.mal_id) ? 'mdi-heart' : (isHovered === overview.mal_id ? 'mdi-heart' : 'mdi-heart-outline')" @click="addToFavorites(overview.mal_id)"></v-btn>
+        <v-btn
+          class="top-right-button"
+          size="small"
+          color="surface-variant"
+          variant="text"
+          @mouseover="toggleHover(overview.mal_id)"
+          @mouseout="toggleHover(null)"
+          :icon="isFavorite(overview.mal_id) ? 'mdi-heart' : (isHovered === overview.mal_id ? 'mdi-heart' : 'mdi-heart-outline')"
+          @click="addToFavorites(overview.mal_id)"
+        ></v-btn>
       </v-img>
-
       <a :href="overview.url" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
         <v-card-title class="text-primary title">
           {{ overview.title }}
@@ -65,6 +88,7 @@ export default defineComponent({
     </v-card>
   </div>
 </template>
+
 
 
 
