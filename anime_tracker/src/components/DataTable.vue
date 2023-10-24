@@ -10,7 +10,7 @@ export default defineComponent({
       type: Object as PropType<IAppModel>
     },
   },
-  setup(props) {
+  setup() {
     const headers = [
       { title: 'Title', key: 'title' },
       { title: 'Synopsis', key: 'synopsis'}

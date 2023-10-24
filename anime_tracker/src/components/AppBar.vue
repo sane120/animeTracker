@@ -3,6 +3,7 @@
 import { Overviews } from '@/models/animeModels';
 import { APIHandler } from '@/models/APIHandler';
 import { IAppModel } from '@/models/AppViewModel';
+import { LocalStorageHandler } from '@/models/LocalStorageHandler';
 import { defineComponent, PropType, ref } from 'vue';
 
 export default defineComponent({
@@ -16,18 +17,26 @@ export default defineComponent({
 
     const searchField = ref("");
     const resultList = ref<Overviews>([]);
-    const animeList = ref<Overviews>([]);
     const apiHandler = new APIHandler();
     const handleSearch = async () => {
+    const favoritesArray = LocalStorageHandler.getLocalStorage('favorites');
+    const trimmedFavoritesArray = JSON.parse(JSON.stringify(favoritesArray).trim());
 
-      console.log(searchField.value);
-      resultList.value = await apiHandler.getAnimeSearch(searchField.value);
-      console.log(resultList.value);
-      if (resultList.value) {
-        emit('update:appModel', { ...props.appModel, animeList: resultList.value });
-      }
-    };
+resultList.value = await apiHandler.getAnimeSearch(searchField.value);
 
+if (resultList.value) {
+  resultList.value.forEach(element => {
+    const index = trimmedFavoritesArray.indexOf(element.mal_id);
+    if (index > -1) {
+      element.isFavorite = true;
+    }
+  });
+
+  LocalStorageHandler.saveLocalStorage('favorites', trimmedFavoritesArray);
+  emit('update:appModel', { ...props.appModel, animeList: resultList.value })
+  ;
+}
+};
     return {
       handleSearch,
       searchField
@@ -35,21 +44,27 @@ export default defineComponent({
   },
 });
 </script>
+
 <template>
   <v-app-bar color="secondary">
     <template v-slot:prepend>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
     </template>
-    <v-app-bar-title class="title" @click="$router.push('/')">Anitrack
-    </v-app-bar-title>
+    <v-app-bar-title class="title" @click="$router.push('/')">Anitrack</v-app-bar-title>
     <v-form @submit.prevent="handleSearch">
       <v-container>
-        <v-text-field v-model="searchField" label="Search for an anime..." required></v-text-field>
+        <v-text-field
+          variant="outlined"
+          class="textField"
+          v-model="searchField"
+          label="Search for an anime..."
+          required
+        ></v-text-field>
       </v-container>
     </v-form>
     <v-spacer></v-spacer>
     <v-btn to="/two" icon>
-      <v-icon>mdi-magnify</v-icon>
+      <v-icon>mdi-table</v-icon>
     </v-btn>
     <v-btn to="/three" icon>
       <v-icon>mdi-heart</v-icon>
@@ -68,6 +83,11 @@ export default defineComponent({
 
 .title:hover {
   opacity: .5;
+}
+
+.textField {
+  width: 400px;
+  margin-top: 30px;
 }
 </style>
 @/models/animeModels

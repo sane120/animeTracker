@@ -1,5 +1,7 @@
 <script lang="ts">
 import { IAppModel } from '@/models/AppViewModel';
+import { LocalStorageHandler } from '@/models/LocalStorageHandler';
+import { IOverview } from '@/models/animeModels';
 import { defineComponent, PropType, ref } from 'vue';
 
 export default defineComponent({
@@ -10,50 +12,50 @@ export default defineComponent({
     },
   },
 
-  setup(props) {
-    const isHovered = ref<number | null>(null);
+  setup() {
 
+    const isHovered = ref<number | null>(null);
     const toggleHover = (mal_id?: number | null) => {
       isHovered.value = mal_id ?? null;
     };
 
     const addToFavorites = (mal_id: number) => {
-      const favorites = getFavorites();
+      const favorites = LocalStorageHandler.getLocalStorage('favorites');
       favorites.push(mal_id);
-      saveFavorites(favorites);
+      LocalStorageHandler.saveLocalStorage('favorites', favorites);
     };
 
     const getFavorites = () => {
-      const favorites = localStorage.getItem('favorites');
-      return favorites ? JSON.parse(favorites) : [];
+      return LocalStorageHandler.getLocalStorage('favorites');
     };
 
     const saveFavorites = (favorites: number[]) => {
-      localStorage.setItem('favorites', JSON.stringify(favorites));
+      LocalStorageHandler.saveLocalStorage('favorites', favorites);
     };
 
     const isFavorite = (mal_id: number) => {
       return getFavorites().includes(mal_id);
     };
 
-    const toggleFavorites = (mal_id: number) => {
+    const toggleFavorites = (overview: IOverview) => {
       const favorites = getFavorites();
-      const index = favorites.indexOf(mal_id);
+      const index = favorites.indexOf(overview.mal_id);
       if (index !== -1) {
         favorites.splice(index, 1);
+        overview.isFavorite = false;
       } else {
-        favorites.push(mal_id);
+        favorites.push(overview.mal_id);
+        overview.isFavorite = true;
       }
       saveFavorites(favorites);
     };
-
 
     return {
       isHovered,
       toggleHover,
       addToFavorites,
       isFavorite,
-      toggleFavorites
+      toggleFavorites,
     };
   },
 });
@@ -73,11 +75,16 @@ export default defineComponent({
         </v-card>
       </v-dialog>
       <v-img class="align-end image" height="300" width="300" :src="overview.images.jpg.large_image_url" cover>
-        <v-btn class="top-right-button" size="small" color="surface-variant" variant="text"
-          @mouseover="toggleHover(overview.mal_id)" @mouseout="toggleHover(null)"
-          :icon="isFavorite(overview.mal_id) ? 'mdi-heart' : (isHovered === overview.mal_id ? 'mdi-heart' : 'mdi-heart-outline')"
-          @click="toggleFavorites(overview.mal_id)"></v-btn>
-
+        <v-btn
+          class="top-right-button"
+          size="small"
+          color="surface-variant"
+          variant="text"
+          @mouseover="toggleHover(overview.mal_id)"
+          @mouseout="toggleHover(null)"
+          :icon="overview.isFavorite ? 'mdi-heart' : (isHovered === overview.mal_id ? 'mdi-heart' : 'mdi-heart-outline')"
+          @click.stop="toggleFavorites(overview);"
+        ></v-btn>
       </v-img>
       <a :href="overview.url" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
         <v-card-title class="text-primary title">
@@ -89,17 +96,12 @@ export default defineComponent({
   </div>
 </template>
 
-
-
-
-
-
-
 <style scoped>
 .card-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  flex-direction: row;
 }
 
 .card {

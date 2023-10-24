@@ -37,6 +37,7 @@ export interface IOverview {
   themes: Theme[]
   demographics: StudioInformation[]
   dialog: boolean;
+  isFavorite?: boolean;
 }
 
 export interface Images {
