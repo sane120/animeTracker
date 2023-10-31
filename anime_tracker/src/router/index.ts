@@ -13,11 +13,13 @@ const routes: RouteRecordRaw[] = [
     path: '/two',
     name: 'Two',
     component: Two,
+    props: (route) => ({ appModel: route.meta.appModel })
   },
   {
     path: '/three',
     name: 'Three',
     component: Three,
+    props: (route) => ({ appModel: route.meta.appModel })
   },
 ];
 

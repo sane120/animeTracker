@@ -1,20 +1,27 @@
 <script lang="ts">
-  import AppBar from "@/layouts/default/AppBar.vue";
-  import { defineComponent } from 'vue';
+import AppBar from "@/components/AppBar.vue";
+import { defineComponent, ref } from 'vue';
+import DataCards from "@/components/DataCards.vue";
 
-  export default defineComponent({
-    setup() {
+import { IAppModel } from "@/models/AppViewModel";
 
-    },
-    components:{
-      AppBar
-    }
-  })
+export default defineComponent({
+  components: {
+    AppBar,
+  },
+  setup() {
+    const appModel = ref<IAppModel>({});
+    return {
+      appModel,
+      DataCards,
+    };
+  },
+});
 </script>
 
 <template>
   <v-app>
-    <AppBar></AppBar>
-    <router-view />
+    <AppBar :appModelAppBar="appModel" @update:appMainModel="updatedModel => appModel = updatedModel"></AppBar>
+    <router-view :appModel="appModel"/>
   </v-app>
 </template>

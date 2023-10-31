@@ -1,0 +1,196 @@
+@startuml
+
+class AppViewModel {
+  + animeList: Overviews
+}
+
+class AppBar {
+  - appModel: IAppModel
+  + handleSearch()
+}
+
+class DataCards {
+  - appModel: IAppModel
+  + toggleHover(mal_id: number | null)
+  + addToFavorites(mal_id: number)
+  + isFavorite(mal_id: number)
+  + toggleFavorites(overview: IOverview)
+}
+
+class DataTable {
+  - appModel: IAppModel
+}
+
+class IAppModel {
+  + animeList: Overviews
+}
+
+class IOverview {
+  - mal_id: number
+  - url: string
+  - images: Images
+  - trailer: Trailer
+  - approved: boolean
+  - titles: Title[]
+  - title: string
+  - title_english?: string
+  - title_japanese: string
+  - title_synonyms: string[]
+  - type: string
+  - source: string
+  - episodes?: number
+  - status: string
+  - airing: boolean
+  - aired: Aired
+  - duration: string
+  - rating: string
+  - score?: number
+  - scored_by?: number
+  - rank?: number
+  - popularity: number
+  - members: number
+  - favorites: number
+  - synopsis?: string
+  - background?: string
+  - season?: string
+  - year?: number
+  - broadcast: Broadcast
+  - producers: StudioInformation[]
+  - licensors: StudioInformation[]
+  - studios: StudioInformation[]
+  - genres: Genre[]
+  - explicit_genres: any[]
+  - themes: Theme[]
+  - demographics: StudioInformation[]
+  - dialog: boolean
+  - isFavorite?: boolean
+}
+
+class Images {
+  - jpg: MediaFormat
+  - webp: MediaFormat
+}
+
+class MediaFormat {
+  - image_url: string
+  - small_image_url: string
+  - large_image_url: string
+}
+
+class Images2 {
+  - medium_image_url?: string
+  - maximum_image_url?: string
+  - image_url?: string
+  - small_image_url?: string
+  - large_image_url?: string
+}
+
+class Trailer {
+  - youtube_id?: string
+  - url?: string
+  - embed_url?: string
+  - images: Images2
+}
+
+class Genre {
+  - mal_id: number
+  - type: string
+  - name: string
+  - url: string
+}
+
+class Theme {
+  - mal_id: number
+  - type: string
+  - name: string
+  - url: string
+}
+
+class Title {
+  - type: string
+  - title: string
+}
+
+class Aired {
+  - from?: string
+  - to?: string
+  - prop: Prop
+  - string: string
+}
+
+class Prop {
+  - from: FromDate
+  - to: To
+}
+
+class FromDate {
+  - day?: number
+  - month?: number
+  - year?: number
+}
+
+class To {
+  - day?: number
+  - month?: number
+  - year?: number
+}
+
+class Broadcast {
+  - day?: string
+  - time?: string
+  - timezone?: string
+  - string: string
+}
+
+class StudioInformation {
+  - mal_id: number
+  - type: string
+  - name: string
+  - url: string
+}
+
+class User {
+  - id: UserId
+  - username: string
+  - email: string
+  - password: string
+  - favorites: List<Favorite>
+  - tracking: List<Tracking>
+}
+
+class Favorite {
+  - id: number
+  - animeID: number
+}
+
+class Tracking {
+  - id: number
+  - animeID: number
+}
+
+class Item {
+  - animeID: number
+  - name: string
+  - description: string
+  - /* Other item properties */
+}
+
+AppViewModel --* AppBar: appModel
+AppViewModel --* DataCards: appModel
+AppViewModel --* DataTable: appModel
+AppModel - APIHandler: Uses
+APIHandler - LocalStorageHandler: Uses
+LocalStorageHandler --|> LocalStorageHandler: Extends
+APIHandler - Overviews: Returns
+Overviews --|> IOverview: Contains
+IOverview --|> Images: Contains
+IOverview --|> Trailer: Contains
+Images --|> MediaFormat: Contains
+Images2 --|> MediaFormat: Contains
+Trailer --|> Images2: Contains
+User "1" --> "0..*" Favorite : has
+User "1" --> "0..*" Tracking : has
+Favorite "1" --> "1" Item : isFavorite
+Tracking "1" --> "1" Item : isTracking
+
+@enduml
