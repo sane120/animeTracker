@@ -21,7 +21,7 @@ export default defineComponent({
 
 <template>
   <v-app>
-    <AppBar :appModel="appModel" @update:appModel="newModel => appModel = newModel"></AppBar>
+    <AppBar :appModelAppBar="appModel" @update:appMainModel="updatedModel => appModel = updatedModel"></AppBar>
     <router-view :appModel="appModel"/>
   </v-app>
 </template>

@@ -8,7 +8,7 @@ import { defineComponent, PropType, ref } from 'vue';
 
 export default defineComponent({
   props: {
-    appModel: {
+    appModelAppBar: {
       required: true,
       type: Object as PropType<IAppModel>
     },
@@ -33,7 +33,7 @@ if (resultList.value) {
   });
 
   LocalStorageHandler.saveLocalStorage('favorites', trimmedFavoritesArray);
-  emit('update:appModel', { ...props.appModel, animeList: resultList.value })
+  emit('update:appMainModel', { ...props.appModelAppBar, animeList: resultList.value })
   ;
 }
 };
@@ -87,7 +87,7 @@ if (resultList.value) {
 
 .textField {
   width: 400px;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 </style>
 @/models/animeModels
