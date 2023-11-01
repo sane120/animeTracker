@@ -102,6 +102,7 @@ export default defineComponent({
   flex-wrap: wrap;
   justify-content: center;
   flex-direction: row;
+  margin-top: 50px;
 }
 
 .card {

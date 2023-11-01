@@ -3,7 +3,7 @@ import { Overviews } from '@/models/animeModels';
 import { APIHandler } from '@/models/APIHandler';
 import { IAppModel } from '@/models/AppViewModel';
 import { LocalStorageHandler } from '@/models/LocalStorageHandler';
-import { defineComponent, PropType, ref, watch, computed } from 'vue';
+import { defineComponent, PropType, ref, computed } from 'vue';
 import _debounce from 'lodash.debounce';
 import { useRouter } from 'vue-router';
 
@@ -15,18 +15,23 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    const router = useRouter();
     const selectedAnime = ref("");
-
     const searchField = ref("");
     const resultList = ref<Overviews>([]);
     const apiHandler = new APIHandler();
 
     const suggestedTitles = computed(() => {
-      return resultList.value.filter(element => element.title.toLowerCase().includes(searchField.value.toLowerCase()));
+      const searchValue = searchField.value || '';
+      const convertedSearchValue = String(searchValue);
+      return resultList.value.filter(element => element.title.toLowerCase().includes(convertedSearchValue.toLowerCase()));
     });
+
     const debouncedSearch = _debounce(async () => {
       console.log('Debounced');
-      if (searchField.value.length < 3){ return; }
+      if (searchField.value.length < 3) {
+        return;
+      }
       const favoritesArray = LocalStorageHandler.getLocalStorage('favorites');
       const trimmedFavoritesArray = JSON.parse(JSON.stringify(favoritesArray).trim());
 
@@ -47,22 +52,26 @@ export default defineComponent({
 
     const handleSearch = () => {
       debouncedSearch();
-    };
 
-    watch(selectedAnime, (newSelectedAnime) => {
-      if (newSelectedAnime) {
-        const router = useRouter();
-        router.push({ name: 'Three' });
+
+      const searchField = document.getElementById('InputId') as HTMLInputElement;
+
+      if (searchField) {
+        searchField.addEventListener('input', () => {
+          const selectedAnime = searchField.value;
+          if (selectedAnime && selectedAnime.trim()) {
+            router.push('/three');
+          }
+        });
       }
-    });
-
+    }
     return {
       handleSearch,
       searchField,
       suggestedTitles,
       selectedAnime,
     };
-  },
+  }
 });
 </script>
 
@@ -82,6 +91,7 @@ export default defineComponent({
           item-text="title"
           item-value="mal_id"
           @input="handleSearch"
+          id="InputId"
         ></v-combobox>
       </v-container>
     </v-form>
