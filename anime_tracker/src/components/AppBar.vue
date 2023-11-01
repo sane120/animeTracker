@@ -1,45 +1,66 @@
 <script lang="ts">
-
 import { Overviews } from '@/models/animeModels';
 import { APIHandler } from '@/models/APIHandler';
 import { IAppModel } from '@/models/AppViewModel';
 import { LocalStorageHandler } from '@/models/LocalStorageHandler';
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, PropType, ref, watch, computed } from 'vue';
+import _debounce from 'lodash.debounce';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   props: {
     appModelAppBar: {
       required: true,
-      type: Object as PropType<IAppModel>
+      type: Object as PropType<IAppModel>,
     },
   },
   setup(props, { emit }) {
+    const selectedAnime = ref("");
 
     const searchField = ref("");
     const resultList = ref<Overviews>([]);
     const apiHandler = new APIHandler();
-    const handleSearch = async () => {
-    const favoritesArray = LocalStorageHandler.getLocalStorage('favorites');
-    const trimmedFavoritesArray = JSON.parse(JSON.stringify(favoritesArray).trim());
 
-resultList.value = await apiHandler.getAnimeSearch(searchField.value);
+    const suggestedTitles = computed(() => {
+      return resultList.value.filter(element => element.title.toLowerCase().includes(searchField.value.toLowerCase()));
+    });
+    const debouncedSearch = _debounce(async () => {
+      console.log('Debounced');
+      if (searchField.value.length < 3){ return; }
+      const favoritesArray = LocalStorageHandler.getLocalStorage('favorites');
+      const trimmedFavoritesArray = JSON.parse(JSON.stringify(favoritesArray).trim());
 
-if (resultList.value) {
-  resultList.value.forEach(element => {
-    const index = trimmedFavoritesArray.indexOf(element.mal_id);
-    if (index > -1) {
-      element.isFavorite = true;
-    }
-  });
+      resultList.value = await apiHandler.getAnimeSearch(searchField.value);
 
-  LocalStorageHandler.saveLocalStorage('favorites', trimmedFavoritesArray);
-  emit('update:appMainModel', { ...props.appModelAppBar, animeList: resultList.value })
-  ;
-}
-};
+      if (resultList.value) {
+        resultList.value.forEach(element => {
+          const index = trimmedFavoritesArray.indexOf(element.mal_id);
+          if (index > -1) {
+            element.isFavorite = true;
+          }
+        });
+
+        LocalStorageHandler.saveLocalStorage('favorites', trimmedFavoritesArray);
+        emit('update:appMainModel', { ...props.appModelAppBar, animeList: resultList.value });
+      }
+    }, 300);
+
+    const handleSearch = () => {
+      debouncedSearch();
+    };
+
+    watch(selectedAnime, (newSelectedAnime) => {
+      if (newSelectedAnime) {
+        const router = useRouter();
+        router.push({ name: 'Three' });
+      }
+    });
+
     return {
       handleSearch,
-      searchField
+      searchField,
+      suggestedTitles,
+      selectedAnime,
     };
   },
 });
@@ -51,15 +72,17 @@ if (resultList.value) {
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
     </template>
     <v-app-bar-title class="title" @click="$router.push('/')">Anitrack</v-app-bar-title>
-    <v-form @submit.prevent="handleSearch">
+    <v-form @submit.prevent="handleSearch" class="textField">
       <v-container>
-        <v-text-field
-          variant="outlined"
-          class="textField"
+        <v-combobox
           v-model="searchField"
+          :items="suggestedTitles"
           label="Search for an anime..."
           required
-        ></v-text-field>
+          item-text="title"
+          item-value="mal_id"
+          @input="handleSearch"
+        ></v-combobox>
       </v-container>
     </v-form>
     <v-spacer></v-spacer>
@@ -74,6 +97,7 @@ if (resultList.value) {
     </v-btn>
   </v-app-bar>
 </template>
+
 <style scoped>
 .title {
   font-family: Roboto;
@@ -90,4 +114,3 @@ if (resultList.value) {
   margin-top: 20px;
 }
 </style>
-@/models/animeModels
