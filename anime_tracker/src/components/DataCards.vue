@@ -1,4 +1,5 @@
 <script lang="ts">
+import { APIHandler } from '@/models/APIHandler';
 import { IAppModel } from '@/models/AppViewModel';
 import { LocalStorageHandler } from '@/models/LocalStorageHandler';
 import { IOverview } from '@/models/animeModels';
@@ -13,16 +14,27 @@ export default defineComponent({
   },
 
   setup() {
-
+    const apiHandler = new APIHandler();
     const isHovered = ref<number | null>(null);
     const toggleHover = (mal_id?: number | null) => {
       isHovered.value = mal_id ?? null;
     };
 
     const addToFavorites = (mal_id: number) => {
-      const favorites = LocalStorageHandler.getLocalStorage('favorites');
+      const favorites = getFavorites();
       favorites.push(mal_id);
-      LocalStorageHandler.saveLocalStorage('favorites', favorites);
+      saveFavorites(favorites);
+      updateBackendFavorites(favorites);
+    };
+
+    const removeFromFavorites = (mal_id: number) => {
+      const favorites = getFavorites();
+      const index = favorites.indexOf(mal_id);
+      if (index !== -1) {
+        favorites.splice(index, 1);
+        saveFavorites(favorites);
+        updateBackendFavorites(favorites);
+      }
     };
 
     const getFavorites = () => {
@@ -33,27 +45,36 @@ export default defineComponent({
       LocalStorageHandler.saveLocalStorage('favorites', favorites);
     };
 
+    const updateBackendFavorites = (favorites: number[]) => {
+      apiHandler.sendFavoritesData(favorites)
+        .then((result: boolean) => {
+          if (result) {
+            console.log('POST Favorites have been sent successfully');
+          } else {
+            console.error('POST Favorites have not been sent');
+          }
+        });
+    };
+
     const isFavorite = (mal_id: number) => {
       return getFavorites().includes(mal_id);
     };
 
     const toggleFavorites = (overview: IOverview) => {
-      const favorites = getFavorites();
-      const index = favorites.indexOf(overview.mal_id);
-      if (index !== -1) {
-        favorites.splice(index, 1);
+      if (isFavorite(overview.mal_id)) {
+        removeFromFavorites(overview.mal_id);
         overview.isFavorite = false;
       } else {
-        favorites.push(overview.mal_id);
+        addToFavorites(overview.mal_id);
         overview.isFavorite = true;
       }
-      saveFavorites(favorites);
     };
 
     return {
       isHovered,
       toggleHover,
       addToFavorites,
+      removeFromFavorites,
       isFavorite,
       toggleFavorites,
     };

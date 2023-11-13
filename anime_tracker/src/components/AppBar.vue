@@ -50,7 +50,7 @@ export default defineComponent({
       }
     }, 300);
 
-    const handleSearch = () => {
+    const handleSearch = (event:Event) => {
       debouncedSearch();
 
 
@@ -102,7 +102,7 @@ export default defineComponent({
     <v-btn to="/three" icon>
       <v-icon>mdi-heart</v-icon>
     </v-btn>
-    <v-btn icon>
+    <v-btn to="/four" icon>
       <v-icon>mdi-dots-vertical</v-icon>
     </v-btn>
   </v-app-bar>
